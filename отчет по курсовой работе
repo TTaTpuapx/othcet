@@ -1,0 +1,112 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+ 
+namespace KEG
+{
+  public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+ 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            double x0 = Convert.ToDouble(textBox1.Text);
+            double y0 = Convert.ToDouble(textBox2.Text);
+            double n = Convert.ToDouble(textBox3.Text);
+            double h = Convert.ToDouble(textBox4.Text);
+  double a = Convert.ToDouble(textBox5.Text);
+            dataGridView1.Rows.Clear();
+            if (comboBox1.SelectedIndex == 0)
+            {
+              for (int i = 0; i <= n; i++)
+              {
+                    dataGridView1.Rows.Add(String.Format("{0:0.000}", x0), String.Format("{0:0.000}", y0), String.Format("{0:0.000}", a*x0*x0*x0+5*y0), String.Format("{0:0.000}", h*(a*x0*x0*x0+5*y0)));
+                  y0+=h*(a*x0*x0*x0+5*y0);
+                  x0+=h;
+              }
+            }
+            else
+            {
+              for (int i = 0; i <= n; i++)
+              {
+                  dataGridView1.Rows.Add(String.Format("{0:0.000}", x0), String.Format("{0:0.000}", y0), String.Format("{0:0.000}", Math.Sin(a*x0)*y0), String.Format("{0:0.000}", h*Math.Sin(a*x0)*y0));
+                  y0+=h*Math.Sin(a*x0)*y0;
+                  x0+=h;
+              }
+            }
+        }
+ 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            double x0 = Convert.ToDouble(textBox1.Text);
+            double y0 = Convert.ToDouble(textBox2.Text);
+            double n = Convert.ToDouble(textBox3.Text);
+            double h = Convert.ToDouble(textBox4.Text);
+  double a = Convert.ToDouble(textBox5.Text);
+            chart1.Series[0].Points.Clear();
+            if (comboBox2.SelectedIndex == 0)
+            {
+              for (int i = 0; i <= n; i++)
+              {
+                    chart1.Series[0].Points.AddXY(x0,y0);
+                  x0+=h;
+                  y0+=h*(a*x0*x0*x0+5*y0);
+              }
+            }
+            else
+            {
+              for (int i = 0; i <= n; i++)
+              {
+                    chart1.Series[0].Points.AddXY(x0, y0);
+                  x0+=h;
+                  y0+=h*(Math.Sin(a*x0)*y0);
+              }
+          }
+      }
+  private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            Stream myStream;
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+              if ((myStream = saveFileDialog1.OpenFile()) != null)
+              {
+                  StreamWriter myWriter = new StreamWriter(myStream);
+                  try
+                  {
+                      for (int i = 0; i < dataGridView1.RowCount - 1; i++)
+                      {
+                          string lines = "";
+ 
+                          for (int j = 0; j < dataGridView1.ColumnCount - 1; j++)
+                          {
+                              lines += (string.IsNullOrEmpty(lines) ? " " : ", ") + dataGridView1.Rows[i].Cells[j].Value.ToString();
+                          }
+                            myWriter.WriteLine(lines);
+                      }
+                        myWriter.Close();
+                  }
+                  catch (Exception ex)
+                  {
+                      MessageBox.Show(ex.Message);
+                  }
+                  finally
+                  {
+                      myStream.Close();
+                  }
+                    myStream.Close();
+              }
+          }
+      } 
+  }
+}
